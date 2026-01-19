@@ -32,9 +32,19 @@ export default function DashboardLayout({
   const router = useRouter();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true); // Start collapsed, will expand on desktop
 
   const supabase = createClient();
+
+  // Auto-collapse on mobile, expand on desktop
+  useEffect(() => {
+    const checkMobile = () => {
+      setCollapsed(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
