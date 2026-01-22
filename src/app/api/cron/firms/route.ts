@@ -4,15 +4,17 @@ import {
   fetchFIRMSData,
   isDuplicate,
   confidenceToIntensity,
+  generateSourceId,
+  generateDescription,
+  parseDetectionDate,
+  FIRMSError,
   type FIRMSHotspot,
 } from '@/lib/nasa-firms';
 
 // Vercel Cron: run every 15 minutes
+// vercel.json: { "path": "/api/cron/firms", "schedule": "*/15 * * * *" }
 export const runtime = 'edge';
 export const maxDuration = 60;
-
-// Cron config for vercel.json:
-// { "path": "/api/cron/firms", "schedule": "*/15 * * * *" }
 
 export async function GET(request: Request) {
   // Verify cron secret (optional, for Vercel cron jobs)
@@ -26,8 +28,8 @@ export async function GET(request: Request) {
   try {
     console.log('[FIRMS Cron] Starting data fetch...');
 
-    // Fetch NASA FIRMS data (5 days max for free tier)
-    const hotspots = await fetchFIRMSData(5);
+    // Fetch NASA FIRMS data (2 days for more frequent cron, was 5 for daily)
+    const hotspots = await fetchFIRMSData(2);
 
     if (hotspots.length === 0) {
       console.log('[FIRMS Cron] No hotspots found');
@@ -40,13 +42,14 @@ export async function GET(request: Request) {
 
     console.log(`[FIRMS Cron] Found ${hotspots.length} hotspots from NASA FIRMS`);
 
-    // Get existing reports for deduplication
+    // Get existing reports for deduplication (match fetch window + buffer)
     const supabase = createAdminClient();
+    const lookbackDays = 5; // 2 days fetch + 3 days buffer
     const { data: existingReports, error: fetchError } = await supabase
       .from('fire_reports')
       .select('latitude, longitude, source_id')
       .eq('source', 'nasa_firms')
-      .gte('created_at', new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString());
+      .gte('created_at', new Date(Date.now() - lookbackDays * 24 * 60 * 60 * 1000).toISOString());
 
     if (fetchError) {
       console.error('[FIRMS Cron] Error fetching existing reports:', fetchError);
@@ -66,8 +69,8 @@ export async function GET(request: Request) {
         return false;
       }
 
-      // Check by proximity (1km threshold)
-      if (reports && isDuplicate(hotspot, reports, 1)) {
+      // Check by proximity (500m threshold)
+      if (reports && isDuplicate(hotspot, reports, 0.5)) {
         return false;
       }
 
@@ -86,21 +89,25 @@ export async function GET(request: Request) {
     }
 
     // Insert new fire reports
-    const reportsToInsert = newHotspots.map((hotspot) => ({
+    const reportsToInsert = newHotspots.map((hotspot: FIRMSHotspot) => ({
       latitude: hotspot.latitude,
       longitude: hotspot.longitude,
-      source: 'nasa_firms' as const,
+      source: 'nasa_firms',
       source_id: generateSourceId(hotspot),
-      status: 'pending' as const,
-      intensity: confidenceToIntensity(hotspot.confidence),
+      status: 'pending',
+      intensity: confidenceToIntensity(hotspot.confidence, hotspot.frp),
       description: generateDescription(hotspot),
       detected_at: parseDetectionDate(hotspot),
+      reported_by: null,
+      verified_at: null,
+      verified_by: null,
+      image_url: null,
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: insertedReports, error: insertError } = await supabase
       .from('fire_reports')
-      // @ts-expect-error - Supabase types don't match exactly with our insert shape
-      .insert(reportsToInsert)
+      .insert(reportsToInsert as any)
       .select('id');
 
     if (insertError) {
@@ -119,6 +126,20 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('[FIRMS Cron] Error:', error);
+
+    // Handle specific FIRMS errors
+    if (error instanceof FIRMSError) {
+      const statusCode = error.code === 'NO_API_KEY' ? 503 : 502;
+      return NextResponse.json(
+        {
+          success: false,
+          error: error.message,
+          code: error.code,
+        },
+        { status: statusCode }
+      );
+    }
+
     return NextResponse.json(
       {
         success: false,
@@ -127,27 +148,4 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
-
-function generateSourceId(hotspot: FIRMSHotspot): string {
-  return `${hotspot.acq_date}_${hotspot.acq_time}_${hotspot.latitude.toFixed(4)}_${hotspot.longitude.toFixed(4)}`;
-}
-
-function generateDescription(hotspot: FIRMSHotspot): string {
-  const parts = [
-    `Detectado por NASA FIRMS (${hotspot.satellite})`,
-    `Confianza: ${hotspot.confidence}`,
-    `FRP: ${hotspot.frp.toFixed(1)} MW`,
-    `Fecha: ${hotspot.acq_date} ${hotspot.acq_time}`,
-    hotspot.daynight === 'D' ? 'Día' : 'Noche',
-  ];
-  return parts.join(' | ');
-}
-
-function parseDetectionDate(hotspot: FIRMSHotspot): string {
-  // acq_date format: "2026-01-17", acq_time format: "0142" (HHMM)
-  const time = hotspot.acq_time.padStart(4, '0');
-  const hours = time.slice(0, 2);
-  const minutes = time.slice(2, 4);
-  return `${hotspot.acq_date}T${hours}:${minutes}:00Z`;
 }
