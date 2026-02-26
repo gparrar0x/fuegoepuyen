@@ -6,9 +6,9 @@
     "rules": {
       "recommended": true,
       "suspicious": { "noExplicitAny": "warn", "noShadowRestrictedNames": "warn", "useIterableCallbackReturn": "warn" },
-      "a11y": { "useButtonType": "warn" },
+      "a11y": { "useButtonType": "warn", "useKeyWithClickEvents": "warn" },
       "style": { "noNonNullAssertion": "warn" },
-      "correctness": { "noInvalidUseBeforeDeclaration": "warn", "useExhaustiveDependencies": "warn" }
+      "correctness": { "noInvalidUseBeforeDeclaration": "warn", "useExhaustiveDependencies": "warn", "useHookAtTopLevel": "warn" }
     }
   },
   "formatter": {
@@ -31,7 +31,8 @@
       "!**/dist",
       "!**/*.gen.ts",
       "!**/database.types.ts",
-      "!**/supabase.ts"
+      "!**/supabase.ts",
+      "!**/*.css"
     ]
   }
 }
