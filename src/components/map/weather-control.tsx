@@ -1,17 +1,17 @@
-'use client';
+'use client'
 
-import { useWeatherLayer } from '@/hooks/use-weather-layer';
-import { Button } from '@/components/ui/button';
+import { Cloud, Droplets, Gauge, Thermometer, Wind, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { Cloud, Thermometer, Wind, Droplets, Gauge, X } from 'lucide-react';
-import type { WeatherLayerType } from '@/types/map-features';
-import { WEATHER_LAYERS } from '@/types/map-features';
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { useWeatherLayer } from '@/hooks/use-weather-layer'
+import type { WeatherLayerType } from '@/types/map-features'
+import { WEATHER_LAYERS } from '@/types/map-features'
 
 const LAYER_ICONS: Record<WeatherLayerType, React.ReactNode> = {
   temp_new: <Thermometer className="h-4 w-4" />,
@@ -19,24 +19,21 @@ const LAYER_ICONS: Record<WeatherLayerType, React.ReactNode> = {
   wind_new: <Wind className="h-4 w-4" />,
   clouds_new: <Cloud className="h-4 w-4" />,
   pressure_new: <Gauge className="h-4 w-4" />,
-};
+}
 
 interface WeatherControlProps {
-  map: mapboxgl.Map | null;
+  map: mapboxgl.Map | null
 }
 
 export function WeatherControl({ map }: WeatherControlProps) {
-  const { isVisible, activeLayer, setLayer, isConfigured } = useWeatherLayer(map);
+  const { isVisible, activeLayer, setLayer, isConfigured } = useWeatherLayer(map)
 
   if (!isConfigured) {
-    return null;
+    return null
   }
 
   return (
-    <div
-      className="absolute top-16 right-4 z-10"
-      data-testid="weather-control"
-    >
+    <div className="absolute top-16 right-4 z-10" data-testid="weather-control">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -59,9 +56,7 @@ export function WeatherControl({ map }: WeatherControlProps) {
             >
               <span className="mr-2">{LAYER_ICONS[layer]}</span>
               {WEATHER_LAYERS[layer]}
-              {activeLayer === layer && (
-                <span className="ml-auto text-primary">✓</span>
-              )}
+              {activeLayer === layer && <span className="ml-auto text-primary">✓</span>}
             </DropdownMenuItem>
           ))}
           {activeLayer && (
@@ -80,5 +75,5 @@ export function WeatherControl({ map }: WeatherControlProps) {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }

@@ -1,8 +1,9 @@
-'use client';
+'use client'
 
-import { useMapStore } from '@/stores/map-store';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Filter, Package, RefreshCw, Truck, Users } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Sheet,
   SheetContent,
@@ -10,11 +11,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
-import { Label } from '@/components/ui/label';
-import { STATUS_COLORS } from '@/lib/mapbox';
-import { Filter, RefreshCw, Truck, Users, Package } from 'lucide-react';
-import type { FireReportStatus, ResourceType } from '@/types/database';
+} from '@/components/ui/sheet'
+import { STATUS_COLORS } from '@/lib/mapbox'
+import { useMapStore } from '@/stores/map-store'
+import type { FireReportStatus, ResourceType } from '@/types/database'
 
 const ALL_STATUSES: FireReportStatus[] = [
   'pending',
@@ -23,7 +23,7 @@ const ALL_STATUSES: FireReportStatus[] = [
   'contained',
   'extinguished',
   'false_alarm',
-];
+]
 
 const STATUS_LABELS: Record<FireReportStatus, string> = {
   pending: 'Pendiente',
@@ -32,36 +32,34 @@ const STATUS_LABELS: Record<FireReportStatus, string> = {
   contained: 'Contenido',
   extinguished: 'Extinguido',
   false_alarm: 'Falsa alarma',
-};
+}
 
 const RESOURCE_LABELS: Record<ResourceType, { label: string; icon: React.ReactNode }> = {
   water_truck: { label: 'Camiones cisterna', icon: <Truck className="h-4 w-4" /> },
   volunteer: { label: 'Voluntarios', icon: <Users className="h-4 w-4" /> },
   equipment: { label: 'Equipamiento', icon: <Package className="h-4 w-4" /> },
-};
+}
 
 export function MapControls() {
-  const { filters, setFilters, resetFilters, isFilterOpen, toggleFilter } = useMapStore();
+  const { filters, setFilters, resetFilters, isFilterOpen, toggleFilter } = useMapStore()
 
   const toggleStatus = (status: FireReportStatus) => {
-    const current = filters.statuses;
+    const current = filters.statuses
     const updated = current.includes(status)
       ? current.filter((s) => s !== status)
-      : [...current, status];
-    setFilters({ statuses: updated });
-  };
+      : [...current, status]
+    setFilters({ statuses: updated })
+  }
 
   const toggleResourceType = (type: ResourceType) => {
-    const current = filters.resourceTypes;
-    const updated = current.includes(type)
-      ? current.filter((t) => t !== type)
-      : [...current, type];
-    setFilters({ resourceTypes: updated });
-  };
+    const current = filters.resourceTypes
+    const updated = current.includes(type) ? current.filter((t) => t !== type) : [...current, type]
+    setFilters({ resourceTypes: updated })
+  }
 
   const toggleShowResources = () => {
-    setFilters({ showResources: !filters.showResources });
-  };
+    setFilters({ showResources: !filters.showResources })
+  }
 
   return (
     <Sheet open={isFilterOpen} onOpenChange={toggleFilter}>
@@ -83,9 +81,7 @@ export function MapControls() {
       <SheetContent side="left" className="w-80">
         <SheetHeader>
           <SheetTitle>Filtros del mapa</SheetTitle>
-          <SheetDescription>
-            Filtra los focos y recursos visibles en el mapa
-          </SheetDescription>
+          <SheetDescription>Filtra los focos y recursos visibles en el mapa</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
@@ -153,9 +149,7 @@ export function MapControls() {
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: STATUS_COLORS[status] }}
                   />
-                  <span className="text-sm text-muted-foreground">
-                    {STATUS_LABELS[status]}
-                  </span>
+                  <span className="text-sm text-muted-foreground">{STATUS_LABELS[status]}</span>
                 </div>
               ))}
             </div>
@@ -169,5 +163,5 @@ export function MapControls() {
         </div>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

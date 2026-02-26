@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { useFireReports } from '@/hooks/use-fire-reports';
-import { MapControls } from '@/components/map/map-controls';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Flame, Activity, CheckCircle } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle, Flame } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { useState } from 'react'
+import { MapControls } from '@/components/map/map-controls'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useFireReports } from '@/hooks/use-fire-reports'
 
 // Dynamic import for map (no SSR)
-const FireMap = dynamic(
-  () => import('@/components/map/fire-map').then((mod) => mod.FireMap),
-  { ssr: false, loading: () => <MapSkeleton /> }
-);
+const FireMap = dynamic(() => import('@/components/map/fire-map').then((mod) => mod.FireMap), {
+  ssr: false,
+  loading: () => <MapSkeleton />,
+})
 
 function MapSkeleton() {
   return (
     <div className="w-full h-full min-h-[500px] bg-gray-100 animate-pulse flex items-center justify-center">
       <p className="text-muted-foreground">Cargando mapa...</p>
     </div>
-  );
+  )
 }
 
 export default function HomePage() {
-  const { data: fireReports = [], isLoading } = useFireReports();
-  const [showStats] = useState(true);
+  const { data: fireReports = [], isLoading } = useFireReports()
+  const [showStats] = useState(true)
 
   // Calculate stats
-  const activeCount = fireReports.filter((r) => r.status === 'active').length;
-  const pendingCount = fireReports.filter((r) => r.status === 'pending').length;
-  const containedCount = fireReports.filter((r) => r.status === 'contained').length;
+  const activeCount = fireReports.filter((r) => r.status === 'active').length
+  const pendingCount = fireReports.filter((r) => r.status === 'pending').length
+  const containedCount = fireReports.filter((r) => r.status === 'contained').length
   const totalToday = fireReports.filter((r) => {
-    const today = new Date();
-    const reportDate = new Date(r.created_at);
-    return reportDate.toDateString() === today.toDateString();
-  }).length;
+    const today = new Date()
+    const reportDate = new Date(r.created_at)
+    return reportDate.toDateString() === today.toDateString()
+  }).length
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -95,13 +95,17 @@ export default function HomePage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-2">
-            <p>
-              Sistema de monitoreo y reporte de incendios forestales en tiempo real.
-            </p>
+            <p>Sistema de monitoreo y reporte de incendios forestales en tiempo real.</p>
             <div className="flex flex-wrap gap-1">
-              <Badge variant="outline" className="text-xs">NASA FIRMS</Badge>
-              <Badge variant="outline" className="text-xs">Crowdsourcing</Badge>
-              <Badge variant="outline" className="text-xs">Tiempo real</Badge>
+              <Badge variant="outline" className="text-xs">
+                NASA FIRMS
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                Crowdsourcing
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                Tiempo real
+              </Badge>
             </div>
           </CardContent>
         </Card>
@@ -116,5 +120,5 @@ export default function HomePage() {
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -1,31 +1,10 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useFireReports, useUpdateFireReport } from '@/hooks/use-fire-reports';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { CheckCircle, Eye, Flame, Loader2, MapPin, XCircle } from 'lucide-react'
+import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -33,10 +12,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import { Flame, MapPin, CheckCircle, XCircle, Eye, Loader2 } from 'lucide-react';
-import type { FireReport, FireReportStatus } from '@/types/database';
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { useFireReports, useUpdateFireReport } from '@/hooks/use-fire-reports'
+import { useToast } from '@/hooks/use-toast'
+import type { FireReport, FireReportStatus } from '@/types/database'
 
 const STATUS_OPTIONS: { value: FireReportStatus; label: string; color: string }[] = [
   { value: 'pending', label: 'Pendiente', color: 'bg-yellow-500' },
@@ -45,18 +39,18 @@ const STATUS_OPTIONS: { value: FireReportStatus; label: string; color: string }[
   { value: 'contained', label: 'Contenido', color: 'bg-orange-500' },
   { value: 'extinguished', label: 'Extinguido', color: 'bg-green-500' },
   { value: 'false_alarm', label: 'Falsa alarma', color: 'bg-gray-400' },
-];
+]
 
 export default function FocosPage() {
-  const [statusFilter, setStatusFilter] = useState<FireReportStatus | 'all'>('all');
-  const [selectedReport, setSelectedReport] = useState<FireReport | null>(null);
-  const { toast } = useToast();
+  const [statusFilter, setStatusFilter] = useState<FireReportStatus | 'all'>('all')
+  const [selectedReport, setSelectedReport] = useState<FireReport | null>(null)
+  const { toast } = useToast()
 
   const { data: fireReports = [], isLoading } = useFireReports({
     statuses: statusFilter === 'all' ? undefined : [statusFilter],
-  });
+  })
 
-  const updateReport = useUpdateFireReport();
+  const updateReport = useUpdateFireReport()
 
   const handleStatusChange = async (reportId: string, newStatus: FireReportStatus) => {
     try {
@@ -66,28 +60,28 @@ export default function FocosPage() {
         verified_at: ['verified', 'active', 'contained', 'extinguished'].includes(newStatus)
           ? new Date().toISOString()
           : undefined,
-      });
+      })
       toast({
         title: 'Estado actualizado',
-        description: `El foco ahora está: ${STATUS_OPTIONS.find(s => s.value === newStatus)?.label}`,
-      });
+        description: `El foco ahora está: ${STATUS_OPTIONS.find((s) => s.value === newStatus)?.label}`,
+      })
     } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
         description: 'No se pudo actualizar el estado',
-      });
+      })
     }
-  };
+  }
 
   const getStatusBadge = (status: FireReportStatus) => {
-    const option = STATUS_OPTIONS.find((s) => s.value === status);
+    const option = STATUS_OPTIONS.find((s) => s.value === status)
     return (
       <Badge variant="secondary" className={`${option?.color} text-white`}>
         {option?.label}
       </Badge>
-    );
-  };
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -160,7 +154,9 @@ export default function FocosPage() {
                       <Badge variant="outline">{report.source}</Badge>
                     </TableCell>
                     <TableCell>
-                      <span className={report.confidence_score >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      <span
+                        className={report.confidence_score >= 0 ? 'text-green-600' : 'text-red-600'}
+                      >
                         {report.confidence_score > 0 && '+'}
                         {report.confidence_score}
                       </span>
@@ -220,9 +216,7 @@ export default function FocosPage() {
               <MapPin className="h-5 w-5" />
               Detalle del foco
             </DialogTitle>
-            <DialogDescription>
-              Información completa y opciones de gestión
-            </DialogDescription>
+            <DialogDescription>Información completa y opciones de gestión</DialogDescription>
           </DialogHeader>
 
           {selectedReport && (
@@ -234,7 +228,9 @@ export default function FocosPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Fuente</p>
-                  <Badge variant="outline" className="mt-1">{selectedReport.source}</Badge>
+                  <Badge variant="outline" className="mt-1">
+                    {selectedReport.source}
+                  </Badge>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Ubicación</p>
@@ -251,9 +247,7 @@ export default function FocosPage() {
                 </div>
                 <div className="col-span-2">
                   <p className="text-sm font-medium text-muted-foreground">Descripción</p>
-                  <p className="mt-1 text-sm">
-                    {selectedReport.description || 'Sin descripción'}
-                  </p>
+                  <p className="mt-1 text-sm">{selectedReport.description || 'Sin descripción'}</p>
                 </div>
               </div>
 
@@ -261,7 +255,9 @@ export default function FocosPage() {
                 <p className="text-sm font-medium text-muted-foreground mb-2">Cambiar estado</p>
                 <Select
                   value={selectedReport.status}
-                  onValueChange={(v) => handleStatusChange(selectedReport.id, v as FireReportStatus)}
+                  onValueChange={(v) =>
+                    handleStatusChange(selectedReport.id, v as FireReportStatus)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -286,5 +282,5 @@ export default function FocosPage() {
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

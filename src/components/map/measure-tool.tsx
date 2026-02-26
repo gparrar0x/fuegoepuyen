@@ -1,19 +1,12 @@
-'use client';
+'use client'
 
-import { useMeasure } from '@/hooks/use-measure';
-import { formatDistance } from '@/lib/measure-utils';
-import { Button } from '@/components/ui/button';
-import { Ruler, X, Undo2 } from 'lucide-react';
+import { Ruler, Undo2, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useMeasure } from '@/hooks/use-measure'
+import { formatDistance } from '@/lib/measure-utils'
 
 export function MeasureTool() {
-  const {
-    isActive,
-    points,
-    totalDistance,
-    toggle,
-    removeLastPoint,
-    clear,
-  } = useMeasure();
+  const { isActive, points, totalDistance, toggle, removeLastPoint, clear } = useMeasure()
 
   return (
     <div
@@ -26,9 +19,7 @@ export function MeasureTool() {
           data-testid="measure-display"
         >
           <Ruler className="h-4 w-4 text-muted-foreground" />
-          <span className="font-mono font-medium text-sm">
-            {formatDistance(totalDistance)}
-          </span>
+          <span className="font-mono font-medium text-sm">{formatDistance(totalDistance)}</span>
           {points.length > 1 && (
             <Button
               variant="ghost"
@@ -65,5 +56,5 @@ export function MeasureTool() {
         {isActive ? 'Midiendo...' : 'Medir'}
       </Button>
     </div>
-  );
+  )
 }

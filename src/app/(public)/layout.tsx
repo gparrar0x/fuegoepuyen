@@ -1,17 +1,9 @@
-import Link from 'next/link';
-import { Flame, Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Flame, Menu } from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
-export default function PublicLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -27,7 +19,10 @@ export default function PublicLayout({
             <Link href="/" className="text-sm font-medium hover:text-sky-700 transition-colors">
               Mapa
             </Link>
-            <Link href="/reportar" className="text-sm font-medium hover:text-sky-700 transition-colors">
+            <Link
+              href="/reportar"
+              className="text-sm font-medium hover:text-sky-700 transition-colors"
+            >
               Reportar
             </Link>
             <Button asChild variant="outline" size="sm">
@@ -60,19 +55,25 @@ export default function PublicLayout({
       </header>
 
       {/* Main content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* Footer */}
       <footer className="border-t py-6 bg-gray-50">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>Fuego Epuyén — Sistema de gestión de incendios forestales</p>
           <p className="mt-1">
-            Datos de focos: <a href="https://firms.modaps.eosdis.nasa.gov/" target="_blank" rel="noopener" className="underline">NASA FIRMS</a>
+            Datos de focos:{' '}
+            <a
+              href="https://firms.modaps.eosdis.nasa.gov/"
+              target="_blank"
+              rel="noopener"
+              className="underline"
+            >
+              NASA FIRMS
+            </a>
           </p>
         </div>
       </footer>
     </div>
-  );
+  )
 }

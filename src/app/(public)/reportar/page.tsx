@@ -1,37 +1,39 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
-import { ReportFireForm } from '@/components/forms/report-fire-form';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, MapPin } from 'lucide-react';
+import { AlertTriangle, MapPin } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { ReportFireForm } from '@/components/forms/report-fire-form'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 // Dynamic import for map (no SSR)
-const FireMap = dynamic(
-  () => import('@/components/map/fire-map').then((mod) => mod.FireMap),
-  { ssr: false, loading: () => <MapSkeleton /> }
-);
+const FireMap = dynamic(() => import('@/components/map/fire-map').then((mod) => mod.FireMap), {
+  ssr: false,
+  loading: () => <MapSkeleton />,
+})
 
 function MapSkeleton() {
   return (
     <div className="w-full h-full min-h-[300px] bg-gray-100 animate-pulse flex items-center justify-center rounded-lg">
       <p className="text-muted-foreground">Cargando mapa...</p>
     </div>
-  );
+  )
 }
 
 export default function ReportarPage() {
-  const router = useRouter();
-  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const router = useRouter()
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(
+    null,
+  )
 
   const handleMapClick = (lngLat: { lng: number; lat: number }) => {
-    setSelectedLocation({ lat: lngLat.lat, lng: lngLat.lng });
-  };
+    setSelectedLocation({ lat: lngLat.lat, lng: lngLat.lng })
+  }
 
   const handleSuccess = () => {
-    router.push('/');
-  };
+    router.push('/')
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -64,7 +66,8 @@ export default function ReportarPage() {
               </div>
               {selectedLocation && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  📍 Ubicación seleccionada: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                  📍 Ubicación seleccionada: {selectedLocation.lat.toFixed(6)},{' '}
+                  {selectedLocation.lng.toFixed(6)}
                 </p>
               )}
             </CardContent>
@@ -111,5 +114,5 @@ export default function ReportarPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
