@@ -18,7 +18,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Biome check
-        run: pnpm biome check .
+        run: pnpm biome check --diagnostic-level=error .
       - name: TypeScript check
         run: pnpm tsc --noEmit
       - name: Tests
