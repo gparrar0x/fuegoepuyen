@@ -2,11 +2,14 @@
   "name": "fuegoepuyen",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "biome:check": "biome check .",
+    "biome:fix": "biome check --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -45,8 +48,11 @@
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@biomejs/biome": "^2.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "lefthook": "^1.11.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5"
   }

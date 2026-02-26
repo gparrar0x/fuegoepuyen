@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Providers } from '@/components/providers';
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { Providers } from '@/components/providers'
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Fuego Epuyén',
@@ -14,18 +14,14 @@ export const metadata: Metadata = {
     description: 'Sistema de gestión de incendios forestales',
     type: 'website',
   },
-};
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
       <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }

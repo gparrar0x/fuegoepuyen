@@ -1,5 +1,5 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '@/types/database';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
 
 export function createAdminClient() {
   return createSupabaseClient<Database>(
@@ -10,6 +10,6 @@ export function createAdminClient() {
         autoRefreshToken: false,
         persistSession: false,
       },
-    }
-  );
+    },
+  )
 }

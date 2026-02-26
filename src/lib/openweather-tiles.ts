@@ -1,20 +1,20 @@
 // OpenWeather tile configuration
 
-import type { WeatherLayerType } from '@/types/map-features';
+import type { WeatherLayerType } from '@/types/map-features'
 
-const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
-const TILE_URL = 'https://tile.openweathermap.org/map';
+const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY
+const TILE_URL = 'https://tile.openweathermap.org/map'
 
 /**
  * Get tile URL for a weather layer type
  */
 export function getWeatherTileUrl(layer: WeatherLayerType): string {
   if (!OPENWEATHER_API_KEY) {
-    console.warn('OpenWeather API key not configured');
-    return '';
+    console.warn('OpenWeather API key not configured')
+    return ''
   }
 
-  return `${TILE_URL}/${layer}/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`;
+  return `${TILE_URL}/${layer}/{z}/{x}/{y}.png?appid=${OPENWEATHER_API_KEY}`
 }
 
 /**
@@ -26,7 +26,7 @@ export function getWeatherLayerSource(layer: WeatherLayerType): mapboxgl.RasterS
     tiles: [getWeatherTileUrl(layer)],
     tileSize: 256,
     attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
-  };
+  }
 }
 
 /**
@@ -41,12 +41,12 @@ export function getWeatherLayerConfig(): mapboxgl.RasterLayerSpecification {
       'raster-opacity': 0.6,
       'raster-fade-duration': 300,
     },
-  };
+  }
 }
 
 /**
  * Check if OpenWeather API is configured
  */
 export function isWeatherApiConfigured(): boolean {
-  return Boolean(OPENWEATHER_API_KEY);
+  return Boolean(OPENWEATHER_API_KEY)
 }

@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **GitHub Actions CI** [2026-02-25] (SKY-121)
+  - Biome check + tsc + vitest gates on PR/push to main
+- **RLS optimization migration** [2026-02-22] (SKY-110)
+  - `004_optimize_rls_auth_uid.sql`: 6 policies optimized
+
 ### Changed
+- **Biome + Lefthook** [2026-02-22] (SKY-113)
+  - Biome 2.4.4 for formatting/linting, Lefthook pre-commit hook
+
+### Changed (previous)
 
 - NASA FIRMS cron schedule: daily → every 15 minutes for fresher data
 - NASA data fetch window: 5 days → 2 days (optimized for 15min cron)

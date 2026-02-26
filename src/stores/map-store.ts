@@ -1,95 +1,100 @@
-import { create } from 'zustand';
-import type { FireReportStatus, FireIntensity, ResourceType, ResourceStatus } from '@/types/database';
-import type { GeocoderResult, WeatherLayerType, MeasurePoint } from '@/types/map-features';
+import { create } from 'zustand'
+import type {
+  FireIntensity,
+  FireReportStatus,
+  ResourceStatus,
+  ResourceType,
+} from '@/types/database'
+import type { GeocoderResult, MeasurePoint, WeatherLayerType } from '@/types/map-features'
 
 interface MapFilters {
-  statuses: FireReportStatus[];
-  intensities: FireIntensity[];
-  resourceTypes: ResourceType[];
-  resourceStatuses: ResourceStatus[];
-  showResources: boolean;
+  statuses: FireReportStatus[]
+  intensities: FireIntensity[]
+  resourceTypes: ResourceType[]
+  resourceStatuses: ResourceStatus[]
+  showResources: boolean
   dateRange: {
-    from: Date | null;
-    to: Date | null;
-  };
+    from: Date | null
+    to: Date | null
+  }
 }
 
 interface MapState {
   // View state
-  center: [number, number];
-  zoom: number;
+  center: [number, number]
+  zoom: number
 
   // Selection
-  selectedFireId: string | null;
-  selectedResourceId: string | null;
+  selectedFireId: string | null
+  selectedResourceId: string | null
 
   // Filters
-  filters: MapFilters;
+  filters: MapFilters
 
   // UI state
-  isFilterOpen: boolean;
-  isReportFormOpen: boolean;
-  reportLocation: { lat: number; lng: number } | null;
-  isAddMode: boolean;
-  isResourceMenuOpen: boolean;
-  isAddResourceMode: boolean;
-  selectedResourceType: ResourceType | null;
+  isFilterOpen: boolean
+  isReportFormOpen: boolean
+  reportLocation: { lat: number; lng: number } | null
+  isAddMode: boolean
+  isResourceMenuOpen: boolean
+  isAddResourceMode: boolean
+  selectedResourceType: ResourceType | null
 
   // Geocoder
-  geocoderQuery: string;
-  geocoderResults: GeocoderResult[];
-  isGeocoderOpen: boolean;
+  geocoderQuery: string
+  geocoderResults: GeocoderResult[]
+  isGeocoderOpen: boolean
 
   // Measure
-  isMeasureMode: boolean;
-  measurePoints: MeasurePoint[];
-  totalDistance: number;
+  isMeasureMode: boolean
+  measurePoints: MeasurePoint[]
+  totalDistance: number
 
   // Weather
-  weatherLayerVisible: boolean;
-  activeWeatherLayer: WeatherLayerType | null;
+  weatherLayerVisible: boolean
+  activeWeatherLayer: WeatherLayerType | null
 
   // Isochrone
-  isochroneVisible: boolean;
-  isochroneResourceId: string | null;
-  isochroneData: GeoJSON.FeatureCollection | null;
+  isochroneVisible: boolean
+  isochroneResourceId: string | null
+  isochroneData: GeoJSON.FeatureCollection | null
 
   // Actions
-  setCenter: (center: [number, number]) => void;
-  setZoom: (zoom: number) => void;
-  setSelectedFireId: (id: string | null) => void;
-  setSelectedResourceId: (id: string | null) => void;
-  setFilters: (filters: Partial<MapFilters>) => void;
-  resetFilters: () => void;
-  toggleFilter: () => void;
-  openReportForm: (location: { lat: number; lng: number }) => void;
-  closeReportForm: () => void;
-  toggleAddMode: () => void;
-  setAddMode: (active: boolean) => void;
-  toggleResourceMenu: () => void;
-  selectResourceType: (type: ResourceType) => void;
-  clearResourceMode: () => void;
+  setCenter: (center: [number, number]) => void
+  setZoom: (zoom: number) => void
+  setSelectedFireId: (id: string | null) => void
+  setSelectedResourceId: (id: string | null) => void
+  setFilters: (filters: Partial<MapFilters>) => void
+  resetFilters: () => void
+  toggleFilter: () => void
+  openReportForm: (location: { lat: number; lng: number }) => void
+  closeReportForm: () => void
+  toggleAddMode: () => void
+  setAddMode: (active: boolean) => void
+  toggleResourceMenu: () => void
+  selectResourceType: (type: ResourceType) => void
+  clearResourceMode: () => void
 
   // Geocoder actions
-  setGeocoderQuery: (query: string) => void;
-  setGeocoderResults: (results: GeocoderResult[]) => void;
-  setGeocoderOpen: (open: boolean) => void;
-  clearGeocoder: () => void;
+  setGeocoderQuery: (query: string) => void
+  setGeocoderResults: (results: GeocoderResult[]) => void
+  setGeocoderOpen: (open: boolean) => void
+  clearGeocoder: () => void
 
   // Measure actions
-  toggleMeasureMode: () => void;
-  addMeasurePoint: (point: MeasurePoint) => void;
-  setTotalDistance: (distance: number) => void;
-  clearMeasure: () => void;
+  toggleMeasureMode: () => void
+  addMeasurePoint: (point: MeasurePoint) => void
+  setTotalDistance: (distance: number) => void
+  clearMeasure: () => void
 
   // Weather actions
-  setWeatherLayer: (layer: WeatherLayerType | null) => void;
-  toggleWeatherVisibility: () => void;
+  setWeatherLayer: (layer: WeatherLayerType | null) => void
+  toggleWeatherVisibility: () => void
 
   // Isochrone actions
-  setIsochroneResource: (resourceId: string | null) => void;
-  setIsochroneData: (data: GeoJSON.FeatureCollection | null) => void;
-  toggleIsochroneVisibility: () => void;
+  setIsochroneResource: (resourceId: string | null) => void
+  setIsochroneData: (data: GeoJSON.FeatureCollection | null) => void
+  toggleIsochroneVisibility: () => void
 }
 
 const defaultFilters: MapFilters = {
@@ -102,7 +107,7 @@ const defaultFilters: MapFilters = {
     from: null,
     to: null,
   },
-};
+}
 
 export const useMapStore = create<MapState>((set) => ({
   // Initial view centered on Epuyén, Chubut (Patagonia)
@@ -146,80 +151,93 @@ export const useMapStore = create<MapState>((set) => ({
   setSelectedFireId: (id) => set({ selectedFireId: id, selectedResourceId: null }),
   setSelectedResourceId: (id) => set({ selectedResourceId: id, selectedFireId: null }),
 
-  setFilters: (newFilters) => set((state) => ({
-    filters: { ...state.filters, ...newFilters },
-  })),
+  setFilters: (newFilters) =>
+    set((state) => ({
+      filters: { ...state.filters, ...newFilters },
+    })),
 
   resetFilters: () => set({ filters: defaultFilters }),
 
   toggleFilter: () => set((state) => ({ isFilterOpen: !state.isFilterOpen })),
 
-  openReportForm: (location) => set({
-    isReportFormOpen: true,
-    reportLocation: location,
-  }),
+  openReportForm: (location) =>
+    set({
+      isReportFormOpen: true,
+      reportLocation: location,
+    }),
 
-  closeReportForm: () => set({
-    isReportFormOpen: false,
-    reportLocation: null,
-  }),
+  closeReportForm: () =>
+    set({
+      isReportFormOpen: false,
+      reportLocation: null,
+    }),
 
   toggleAddMode: () => set((state) => ({ isAddMode: !state.isAddMode })),
   setAddMode: (active) => set({ isAddMode: active }),
-  toggleResourceMenu: () => set((state) => ({
-    isResourceMenuOpen: !state.isResourceMenuOpen,
-    isAddMode: false, // Close fire add mode
-  })),
-  selectResourceType: (type) => set({
-    selectedResourceType: type,
-    isResourceMenuOpen: false,
-    isAddResourceMode: true,
-    isAddMode: false,
-  }),
-  clearResourceMode: () => set({
-    isAddResourceMode: false,
-    selectedResourceType: null,
-    isResourceMenuOpen: false,
-  }),
+  toggleResourceMenu: () =>
+    set((state) => ({
+      isResourceMenuOpen: !state.isResourceMenuOpen,
+      isAddMode: false, // Close fire add mode
+    })),
+  selectResourceType: (type) =>
+    set({
+      selectedResourceType: type,
+      isResourceMenuOpen: false,
+      isAddResourceMode: true,
+      isAddMode: false,
+    }),
+  clearResourceMode: () =>
+    set({
+      isAddResourceMode: false,
+      selectedResourceType: null,
+      isResourceMenuOpen: false,
+    }),
 
   // Geocoder actions
   setGeocoderQuery: (query) => set({ geocoderQuery: query }),
   setGeocoderResults: (results) => set({ geocoderResults: results }),
   setGeocoderOpen: (open) => set({ isGeocoderOpen: open }),
-  clearGeocoder: () => set({
-    geocoderQuery: '',
-    geocoderResults: [],
-    isGeocoderOpen: false,
-  }),
+  clearGeocoder: () =>
+    set({
+      geocoderQuery: '',
+      geocoderResults: [],
+      isGeocoderOpen: false,
+    }),
 
   // Measure actions
-  toggleMeasureMode: () => set((state) => ({
-    isMeasureMode: !state.isMeasureMode,
-    measurePoints: state.isMeasureMode ? [] : state.measurePoints,
-    totalDistance: state.isMeasureMode ? 0 : state.totalDistance,
-  })),
-  addMeasurePoint: (point) => set((state) => ({
-    measurePoints: [...state.measurePoints, point],
-  })),
+  toggleMeasureMode: () =>
+    set((state) => ({
+      isMeasureMode: !state.isMeasureMode,
+      measurePoints: state.isMeasureMode ? [] : state.measurePoints,
+      totalDistance: state.isMeasureMode ? 0 : state.totalDistance,
+    })),
+  addMeasurePoint: (point) =>
+    set((state) => ({
+      measurePoints: [...state.measurePoints, point],
+    })),
   setTotalDistance: (distance) => set({ totalDistance: distance }),
-  clearMeasure: () => set({
-    measurePoints: [],
-    totalDistance: 0,
-  }),
+  clearMeasure: () =>
+    set({
+      measurePoints: [],
+      totalDistance: 0,
+    }),
 
   // Weather actions
-  setWeatherLayer: (layer) => set({
-    activeWeatherLayer: layer,
-    weatherLayerVisible: layer !== null,
-  }),
-  toggleWeatherVisibility: () => set((state) => ({
-    weatherLayerVisible: !state.weatherLayerVisible,
-  })),
+  setWeatherLayer: (layer) =>
+    set({
+      activeWeatherLayer: layer,
+      weatherLayerVisible: layer !== null,
+    }),
+  toggleWeatherVisibility: () =>
+    set((state) => ({
+      weatherLayerVisible: !state.weatherLayerVisible,
+    })),
 
   // Isochrone actions
   setIsochroneResource: (resourceId) => set({ isochroneResourceId: resourceId }),
   setIsochroneData: (data) => set({ isochroneData: data }),
-  toggleIsochroneVisibility: () => set((state) => ({
-    isochroneVisible: !state.isochroneVisible,
-  })),
-}));
+  toggleIsochroneVisibility: () =>
+    set((state) => ({
+      isochroneVisible: !state.isochroneVisible,
+    })),
+}))

@@ -1,14 +1,11 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useCreateFireReport } from '@/hooks/use-fire-reports';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { AlertTriangle, Camera, Loader2, MapPin } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -16,32 +13,31 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, Camera, AlertTriangle } from 'lucide-react';
+} from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { useCreateFireReport } from '@/hooks/use-fire-reports'
+import { useToast } from '@/hooks/use-toast'
 
 const reportSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   description: z.string().max(500).optional(),
-});
+})
 
-type ReportFormData = z.infer<typeof reportSchema>;
+type ReportFormData = z.infer<typeof reportSchema>
 
 interface ReportFireFormProps {
-  initialLocation?: { lat: number; lng: number };
-  onSuccess?: () => void;
-  onCancel?: () => void;
+  initialLocation?: { lat: number; lng: number }
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
-export function ReportFireForm({
-  initialLocation,
-  onSuccess,
-  onCancel,
-}: ReportFireFormProps) {
-  const [isLocating, setIsLocating] = useState(false);
-  const { toast } = useToast();
-  const createReport = useCreateFireReport();
+export function ReportFireForm({ initialLocation, onSuccess, onCancel }: ReportFireFormProps) {
+  const [isLocating, setIsLocating] = useState(false)
+  const { toast } = useToast()
+  const createReport = useCreateFireReport()
 
   const form = useForm<ReportFormData>({
     resolver: zodResolver(reportSchema),
@@ -50,7 +46,7 @@ export function ReportFireForm({
       longitude: initialLocation?.lng || 0,
       description: '',
     },
-  });
+  })
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -58,32 +54,32 @@ export function ReportFireForm({
         variant: 'destructive',
         title: 'Error',
         description: 'Tu navegador no soporta geolocalización',
-      });
-      return;
+      })
+      return
     }
 
-    setIsLocating(true);
+    setIsLocating(true)
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        form.setValue('latitude', position.coords.latitude);
-        form.setValue('longitude', position.coords.longitude);
-        setIsLocating(false);
+        form.setValue('latitude', position.coords.latitude)
+        form.setValue('longitude', position.coords.longitude)
+        setIsLocating(false)
         toast({
           title: 'Ubicación obtenida',
           description: 'Se ha detectado tu ubicación actual',
-        });
+        })
       },
       (error) => {
-        setIsLocating(false);
+        setIsLocating(false)
         toast({
           variant: 'destructive',
           title: 'Error de ubicación',
           description: error.message,
-        });
+        })
       },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
+      { enableHighAccuracy: true, timeout: 10000 },
+    )
+  }
 
   const onSubmit = async (data: ReportFormData) => {
     try {
@@ -91,26 +87,26 @@ export function ReportFireForm({
         latitude: data.latitude,
         longitude: data.longitude,
         description: data.description,
-      });
+      })
 
       toast({
         title: 'Reporte enviado',
         description: 'Gracias por reportar. Tu reporte será revisado.',
-      });
+      })
 
-      onSuccess?.();
+      onSuccess?.()
     } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
         description: 'No se pudo enviar el reporte. Intenta de nuevo.',
-      });
+      })
     }
-  };
+  }
 
-  const lat = form.watch('latitude');
-  const lng = form.watch('longitude');
-  const hasLocation = lat !== 0 && lng !== 0;
+  const lat = form.watch('latitude')
+  const lng = form.watch('longitude')
+  const hasLocation = lat !== 0 && lng !== 0
 
   return (
     <Card className="w-full max-w-md">
@@ -238,5 +234,5 @@ export function ReportFireForm({
         </CardFooter>
       </form>
     </Card>
-  );
+  )
 }
