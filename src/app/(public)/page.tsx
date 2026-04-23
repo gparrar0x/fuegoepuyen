@@ -91,7 +91,7 @@ export default function HomePage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Flame className="h-4 w-4 text-amber-600" />
-              Fuego Epuyén
+              Igni
             </CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-muted-foreground space-y-2">

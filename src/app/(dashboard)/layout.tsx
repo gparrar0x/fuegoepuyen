@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             <Flame className="h-6 w-6 text-amber-500 flex-shrink-0" />
             {sidebarState === 'expanded' && (
-              <span className="font-bold text-white truncate">Fuego Epuyén</span>
+              <span className="font-bold text-white truncate">Igni</span>
             )}
           </button>
         </div>

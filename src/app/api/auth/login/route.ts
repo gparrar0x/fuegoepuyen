@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Fuego Epuyén</title>
+  <title>Login - Igni</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     <div class="bg-white rounded-lg shadow-lg p-8">
       <div class="text-center mb-6">
         <div class="text-4xl mb-2">🔥</div>
-        <h1 class="text-2xl font-bold">Fuego Epuyén</h1>
+        <h1 class="text-2xl font-bold">Igni</h1>
         <p class="text-gray-600 mt-1">Dashboard de administración</p>
       </div>
 
