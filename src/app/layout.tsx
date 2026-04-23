@@ -6,11 +6,11 @@ import { Providers } from '@/components/providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Fuego Epuyén',
+  title: 'Igni',
   description: 'Sistema de gestión de incendios forestales con crowdsourcing para Argentina',
   keywords: ['incendios', 'argentina', 'emergencias', 'focos de fuego', 'alertas', 'epuyen'],
   openGraph: {
-    title: 'Fuego Epuyén',
+    title: 'Igni',
     description: 'Sistema de gestión de incendios forestales',
     type: 'website',
   },

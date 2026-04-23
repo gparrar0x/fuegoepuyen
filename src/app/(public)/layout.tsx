@@ -11,7 +11,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
             <Flame className="h-6 w-6 text-amber-600" />
-            <span className="hidden sm:inline">Fuego Epuyén</span>
+            <span className="hidden sm:inline">Igni</span>
           </Link>
 
           {/* Desktop nav */}
@@ -59,9 +59,9 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
 
       {/* Footer */}
       <footer className="border-t py-6 bg-gray-50">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>Fuego Epuyén — Sistema de gestión de incendios forestales</p>
-          <p className="mt-1">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground space-y-1">
+          <p>Igni — Sistema de gestión de incendios forestales</p>
+          <p>
             Datos de focos:{' '}
             <a
               href="https://firms.modaps.eosdis.nasa.gov/"
@@ -70,6 +70,26 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               className="underline"
             >
               NASA FIRMS
+            </a>
+          </p>
+          <p>
+            Bien común digital · Código abierto bajo{' '}
+            <a
+              href="https://www.gnu.org/licenses/agpl-3.0.html"
+              target="_blank"
+              rel="noopener"
+              className="underline"
+            >
+              AGPL-3.0
+            </a>
+            {' · '}
+            <a
+              href="https://github.com/gparrar0x/igni"
+              target="_blank"
+              rel="noopener"
+              className="underline"
+            >
+              Ver código fuente
             </a>
           </p>
         </div>

@@ -1,4 +1,4 @@
-# Fuego Alerta Argentina
+# Igni
 
 Sistema de gestión de incendios forestales con crowdsourcing para Argentina.
 
@@ -68,6 +68,20 @@ src/
 
 ## Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-repo/fuego-alerta)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gparrar0x/igni)
 
 Configurar las variables de entorno en Vercel y el cron job se activará automáticamente.
+
+## Licencia
+
+Igni se distribuye bajo la [GNU Affero General Public License v3.0 o posterior](LICENSE).
+
+Esto significa que cualquier persona puede usarlo, modificarlo y desplegarlo, pero si lo corres como servicio para terceros (incluso sin distribuir el código), estas obligado a publicar el codigo fuente completo, incluidas tus modificaciones. Ese es el contrato: Igni es un bien comun digital y las mejoras vuelven a la comunidad.
+
+Los datos generados por la comunidad (focos, reportes, verificaciones) se publican bajo [Creative Commons BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+## Contribuir
+
+Toda contribucion es bienvenida: issues, PRs, documentacion, traducciones, despliegues regionales. Ver `CONTRIBUTING.md` (proximamente).
+
+El proyecto vive en GitHub: https://github.com/gparrar0x/igni

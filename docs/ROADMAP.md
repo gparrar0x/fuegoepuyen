@@ -1,10 +1,22 @@
-# Fuego Alerta - Roadmap de Features
+# Igni — Roadmap
 
-> Documento de referencia para evolución del producto
+> Plan de acción bajo el frame OSS/bien común digital. Actualizado: 2026-04-23
+> Referencias: `MARKET_RESEARCH.md`, `OSS_DEEP_DIVE.md`
 
 ---
 
-## Estado Actual (v0.1)
+## Principio rector
+
+Igni es un **bien común digital open-source**. La comunidad (brigadas, vecinos, Defensa Civil) es el producto y el cliente al mismo tiempo. El éxito se mide en adopción comunitaria, confiabilidad operacional y replicabilidad regional — no en MAU ni ARR.
+
+Tres reglas que ordenan todo lo que sigue:
+1. **Comunidad antes que features.** Un feature sin brigada que lo use es deuda.
+2. **Integrar antes que construir.** Si existe un proyecto OSS maduro que resuelve una capa, lo consumimos.
+3. **Interoperabilidad por default.** Datos en formatos estándar (CAP, GeoJSON, FIRMS). Nada de lock-in.
+
+---
+
+## Estado actual (v0.1)
 
 - [x] Mapa tiempo real con Mapbox (satellite-streets)
 - [x] Ingesta NASA FIRMS cada 15min
@@ -13,99 +25,158 @@
 - [x] Dashboard operacional con FABs
 - [x] Realtime subscriptions Supabase
 - [x] RLS policies
+- [x] Rebrand local `fuegoepuyen` → `igni` (código, GitHub repo, docs)
+
+Pendiente del rebrand: Vercel project + dominio `igni.skyw.app` + Supabase project name (bloqueado por acceso cross-team).
 
 ---
 
-## Quick Wins (1-2 días c/u)
+## Cuatro tracks paralelos
 
-| Feature | Descripción | Impacto | Agente |
-|---------|-------------|---------|--------|
-| PWA + Push | Service worker, manifest, notificaciones push para focos cercanos | Alto | Pixel |
-| Modo offline | Queue reportes sin conexión, sync al reconectar | Alto | Pixel |
-| Foto en reportes | Upload imagen desde cámara/galería a Supabase Storage | Alto | Kokoro + Pixel |
-| Compartir alerta | Botón share para redes sociales/WhatsApp con preview | Medio | Pixel |
-| Filtro temporal | Slider para ver focos por rango de fechas | Medio | Pixel |
+Cada track avanza independiente, con su propio owner. La sincronización sucede en review semanal.
 
----
-
-## Medium Effort (3-5 días)
-
-| Feature | Descripción | Impacto | Agente |
-|---------|-------------|---------|--------|
-| Weather overlay | Capa de viento, humedad, temp (OpenWeather/Windy API) | Alto | Kokoro + Pixel |
-| Asignación recursos→focos | Vincular recurso a foco activo, tracking de respuesta | Alto | Pixel + Kokoro |
-| WhatsApp bot | Recibir reportes vía WA, notificar por zona | Alto | Flux |
-| Analytics dashboard | Histórico, heatmap zonas riesgo, tendencias | Medio | Pixel + Kokoro |
-| Gamificación | Badges, karma, leaderboard verificadores | Medio | Pixel + Kokoro |
-| Áreas de influencia | Radio de cobertura por recurso, zonas jurisdiccionales | Alto | Pixel + Kokoro |
+| Track | Pregunta que responde | Owner inicial |
+|---|---|---|
+| **1. Fundaciones OSS** | ¿Puede Igni sobrevivir sin Gonza? | Gonza |
+| **2. Interop + Integraciones** | ¿Podemos hablar con el resto del ecosistema? | Kokoro |
+| **3. Features core** | ¿Las brigadas pueden operar con esto en temporada? | Pixel |
+| **4. Comunidad + Piloto** | ¿Quién lo usa en Epuyén esta temporada? | Gonza |
 
 ---
 
-## Bigger Bets (1+ semana)
+## Fase 1 — Fundaciones OSS (próximas 2-3 semanas)
 
-| Feature | Descripción | Impacto | Agente |
-|---------|-------------|---------|--------|
-| Predicción propagación | Modelo con viento + vegetación + topografía | Alto | Kokoro |
-| Twitter/X monitoring | Detectar reportes tempranos en redes | Medio | Flux |
-| Rutas evacuación | Calcular y mostrar rutas seguras desde punto | Alto | Kokoro + Pixel |
-| App nativa | React Native/Expo para mejor UX móvil | Medio | Pixel |
-| Isochrones | Áreas alcanzables en X minutos desde recurso | Alto | Kokoro + Pixel |
+Sin esto no hay release pública. No hay versión pública de un bien común sin gobernanza mínima.
+
+| Entregable | Descripción | Esfuerzo | Bloquea a |
+|---|---|---|---|
+| `LICENSE` (AGPL-3.0) | Licencia que fuerza contribuciones upstream de gobiernos/municipios | 1h | Release pública |
+| `CONTRIBUTING.md` | Cómo contribuir: issues, PRs, code of conduct | 4h | Onboarding de 2º maintainer |
+| `GOVERNANCE.md` | Roles, proceso de decisión, sucesión | 6h | Bus factor mitigation |
+| `DEPLOYMENT.md` | Cómo levantar una instancia desde cero | 1d | Replicabilidad regional |
+| Open Collective | Fiscal host: Open Source Collective. Recibir donaciones sin crear fundación | 2h | Financiamiento |
+| 2º maintainer | Persona con acceso de merge + deploy | 1-2 semanas | Todo lo demás |
+| `CODE_OF_CONDUCT.md` | Contributor Covenant 2.1 | 30min | Onboarding |
+| Datos bajo CC BY 4.0 | Compromiso escrito: los datos no dependen del código | 1h | Confianza comunitaria |
+
+**Hito de fase:** primer release pública `v0.2.0` con licencia + governance + fiscal host activo.
 
 ---
 
-## Áreas de Influencia (Detalle)
+## Fase 2 — Interop mínima (mes 1-2)
 
-### Concepto
-Cada entidad (recurso, cuartel, zona) tiene un **área de cobertura** visualizada en el mapa.
+Lo que convierte a Igni de "app local" a "infraestructura".
 
-### Tipos de Áreas
+| Entregable | Descripción | Esfuerzo | Dependencias |
+|---|---|---|---|
+| **CAP output** | `/api/alerts/cap.xml` emite focos verificados en Common Alerting Protocol | 2-3d | Ninguna |
+| **etl-firms fork** | Pipeline FIRMS propio basado en TAK-NZ/etl-firms. Sink a Supabase. | 3-5d | Verificar licencia del repo |
+| **GeoJSON export** | `/api/fires.geojson` para QGIS / otros sistemas | 1d | Ninguna |
+| **FIRMS multi-país** | Extender ingesta más allá de Argentina (Chile, Uruguay, Bolivia) | 2d | etl-firms fork |
+| **API docs pública** | OpenAPI spec + Swagger UI | 2d | Endpoints estabilizados |
 
-| Entidad | Radio/Forma | Color | Uso |
-|---------|-------------|-------|-----|
-| Camión cisterna | 5-15km círculo | Azul semitransparente | Cobertura de respuesta |
-| Voluntario | 2-5km círculo | Verde semitransparente | Área de movilización |
-| Cuartel bomberos | Polígono jurisdiccional | Naranja borde | Responsabilidad territorial |
-| Zona de riesgo | Polígono irregular | Rojo semitransparente | Vegetación seca, histórico |
-| Foco activo | Círculo dinámico | Rojo gradiente | Radio de peligro estimado |
+**Hito de fase:** Igni emite CAP + consume FIRMS propio, no depende de la UI de NASA ni de terceros.
 
-### Implementación Técnica
+---
 
-```typescript
-// Mapbox GL JS - Circle layer para recursos
-map.addSource('resource-coverage', {
-  type: 'geojson',
-  data: resourcesGeoJSON
-});
+## Fase 3 — Piloto comunitario Epuyén (mes 2-3)
 
-map.addLayer({
-  id: 'coverage-circles',
-  type: 'circle',
-  source: 'resource-coverage',
-  paint: {
-    'circle-radius': ['get', 'coverageRadius'], // km → pixels
-    'circle-color': ['get', 'color'],
-    'circle-opacity': 0.2,
-    'circle-stroke-width': 2,
-    'circle-stroke-color': ['get', 'color']
-  }
-});
+El feedback de una temporada de fuego vale más que 6 meses de dev en soledad.
 
-// Turf.js para polígonos de jurisdicción
-import * as turf from '@turf/turf';
-const buffer = turf.buffer(point, radius, { units: 'kilometers' });
-```
+| Entregable | Descripción |
+|---|---|
+| Contacto formal brigadas Epuyén + El Bolsón | Reunión presencial, no emails |
+| 2-5 verificadores expertos onboarded | Acceso con rol `verifier` en DB |
+| Deploy con dominio `igni.skyw.app` | Una instancia estable, SSL, uptime monitoring |
+| Ritual semanal durante temporada | Review de reportes, falsos positivos, feature requests |
+| Playbook operacional | Documento corto (2-3 pp) que la brigada imprime y pega en el cuartel |
+| Métricas baseline | Nº reportes, % verificados en <1h, zonas cubiertas |
 
-### Cambios en DB
+**Hito de fase:** una brigada real reporta que Igni les ayudó en al menos 1 evento operacional.
 
+---
+
+## Fase 4 — Alertas multi-canal (mes 3-4)
+
+Lo que el análisis de mercado confirmó como must-have que Igni aún no tiene.
+
+| Entregable | Vía | Esfuerzo |
+|---|---|---|
+| **PWA + Push** | Service worker, manifest, web push para focos cercanos | 2-3d |
+| **Modo offline** | Queue reportes sin conexión, sync al reconectar | 3-4d |
+| **WhatsApp alerts** | Twilio / WhatsApp Business API para zona suscrita | 4-5d |
+| **SMS alerts** | Fallback para zonas sin smartphone. Twilio Argentina. | 2-3d |
+| **Integración FireAlert** | Consumir su webhook o self-hostear. Decisión según licencia. | 3-5d |
+| **Foto en reportes** | Upload a Supabase Storage desde móvil | 2d |
+
+**Hito de fase:** alertas llegan por los 4 canales (push, WhatsApp, SMS, email) y hay modo offline funcional.
+
+---
+
+## Fase 5 — Replicabilidad + Federación (mes 4-6)
+
+Lo que convierte a Igni de "una instancia en Patagonia" a "infraestructura replicable".
+
+| Entregable | Descripción |
+|---|---|
+| Segunda instancia real | Otra provincia o municipio deploya Igni con `DEPLOYMENT.md`. Si no se puede reproducir, el DEPLOYMENT.md falló. |
+| Catálogo público de instancias | Tipo `joinmastodon.org` pero para Igni |
+| OpenEWS partnership | Contacto con open-ews.org, evaluar si Igni emite eventos a su broadcast layer |
+| DPGA application | Registro en Digital Public Goods Alliance |
+| NLnet grant application | Budget €15-30K para infra + dev de interop + outreach |
+| Federation protocol | Definir cómo comparten focos verificados entre instancias (CAP como candidato) |
+
+**Hito de fase:** hay al menos 2 instancias Igni activas en producción, operadas por equipos distintos, compartiendo datos opcionalmente.
+
+---
+
+## Features técnicos (backlog priorizado)
+
+Features valiosos pero subordinados a los tracks de arriba. Se atacan cuando apoyan directamente un hito de fase.
+
+### Mapa — Capas y Visualización
+
+| Feature | Fase | Prioridad | Agente |
+|---|---|---|---|
+| **Layer switcher** (satélite/topo/dark) | 3 | Alta | Pixel |
+| **Heatmap histórico** | 5 | Media | Pixel |
+| **Clustering** de marcadores | 3 | Alta | Pixel |
+| **Weather overlay** (viento, humedad, temp) | 4 | Alta | Kokoro + Pixel |
+| **Terrain 3D** | Parked | Baja | — |
+| **Time slider** (rango temporal) | 4 | Media | Pixel |
+
+### Mapa — Análisis espacial
+
+| Feature | Fase | Prioridad | Agente |
+|---|---|---|---|
+| **Fly to** (geocoding + autocomplete) | 3 | Alta | Pixel |
+| **Isochrones** (5/10/15 min desde recurso) | 4 | Alta | Pixel + Kokoro |
+| **Nearest resource** a foco | 4 | Alta | Kokoro |
+| **Route to fire** | 4 | Alta | Kokoro + Pixel |
+| **Buffer analysis** (focos cerca de poblaciones) | 5 | Media | Kokoro |
+| **Measure tool** | 3 | Media | Pixel |
+| **Draw tool** (zonas de riesgo) | 5 | Media | Pixel |
+
+### Áreas de influencia
+
+Cada entidad (recurso, cuartel, zona) tiene un **área de cobertura** visualizada.
+
+| Entidad | Forma | Fase |
+|---|---|---|
+| Camión cisterna | 5-15km círculo | 4 |
+| Voluntario | 2-5km círculo | 4 |
+| Cuartel bomberos | Polígono jurisdiccional | 5 |
+| Zona de riesgo | Polígono irregular | 5 |
+| Foco activo | Círculo dinámico | 3 |
+
+Cambios de DB necesarios:
 ```sql
--- Agregar a resources
 ALTER TABLE resources ADD COLUMN coverage_radius_km DECIMAL(5,2) DEFAULT 10;
 
--- Nueva tabla para jurisdicciones
 CREATE TABLE jurisdictions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  type TEXT NOT NULL, -- 'fire_station', 'municipality', 'province'
+  type TEXT NOT NULL,
   geometry GEOMETRY(Polygon, 4326) NOT NULL,
   responsible_org TEXT,
   contact_phone TEXT,
@@ -117,191 +188,84 @@ CREATE INDEX idx_jurisdictions_geometry ON jurisdictions USING GIST(geometry);
 
 ---
 
-## Funciones del Mapa (Nuevas)
+## Parked / baja prioridad
 
-### Capas y Visualización
+Explícitamente fuera del roadmap 2026. Razones documentadas para evitar scope creep.
 
-| Feature | Descripción | Prioridad |
-|---------|-------------|-----------|
-| **Layer switcher** | Toggle: satélite, topográfico, streets, dark | Alta |
-| **Heatmap de focos** | Densidad de focos históricos | Media |
-| **Clustering** | Agrupar marcadores cuando hay muchos | Alta |
-| **Terrain 3D** | Elevación para entender propagación | Media |
-| **Weather layer** | Viento (flechas), humedad, temp | Alta |
-
-### Herramientas de Interacción
-
-| Feature | Descripción | Prioridad |
-|---------|-------------|-----------|
-| **Measure tool** | Medir distancia y área | Media |
-| **Draw tool** | Dibujar polígonos de zona de riesgo | Media |
-| **Time slider** | Ver focos por rango temporal | Alta |
-| **Fly to** | Búsqueda de ubicación con autocomplete | Alta |
-| **Fullscreen** | Modo pantalla completa | Baja |
-
-### Análisis Espacial
-
-| Feature | Descripción | Prioridad |
-|---------|-------------|-----------|
-| **Isochrones** | Áreas alcanzables en 5/10/15 min | Alta |
-| **Nearest resource** | Calcular recurso más cercano a foco | Alta |
-| **Route to fire** | Ruta óptima desde recurso a foco | Alta |
-| **Buffer analysis** | Focos dentro de X km de poblaciones | Media |
-| **Overlap detection** | Focos en múltiples jurisdicciones | Baja |
-
-### Implementación Sugerida
-
-```typescript
-// Layer switcher con Mapbox
-const STYLES = {
-  satellite: 'mapbox://styles/mapbox/satellite-streets-v12',
-  outdoors: 'mapbox://styles/mapbox/outdoors-v12',
-  dark: 'mapbox://styles/mapbox/dark-v11',
-  streets: 'mapbox://styles/mapbox/streets-v12'
-};
-
-// Heatmap layer
-map.addLayer({
-  id: 'fire-heat',
-  type: 'heatmap',
-  source: 'fires',
-  paint: {
-    'heatmap-weight': ['interpolate', ['linear'], ['get', 'confidence_score'], 0, 0, 100, 1],
-    'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
-    'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 15, 20],
-    'heatmap-color': [
-      'interpolate', ['linear'], ['heatmap-density'],
-      0, 'rgba(0,0,0,0)',
-      0.2, 'rgb(255,237,160)',
-      0.4, 'rgb(254,178,76)',
-      0.6, 'rgb(253,141,60)',
-      0.8, 'rgb(240,59,32)',
-      1, 'rgb(189,0,38)'
-    ]
-  }
-});
-
-// Isochrones con Mapbox API
-const isochroneUrl = `https://api.mapbox.com/isochrone/v1/mapbox/driving/${lng},${lat}?contours_minutes=5,10,15&polygons=true&access_token=${token}`;
-
-// Clustering
-map.addSource('fires-clustered', {
-  type: 'geojson',
-  data: firesGeoJSON,
-  cluster: true,
-  clusterMaxZoom: 14,
-  clusterRadius: 50
-});
-```
+| Feature | Razón |
+|---|---|
+| **PyroNear + cámaras IoT** | Curiosidad técnica, no pedido comunitario. Costo hardware $500-800/nodo, mantenimiento operativo. Reabrir si una brigada lo pide y aporta presupuesto. |
+| **Predicción de propagación** | Integrar con Wildfire Commons o modelos existentes cuando sea necesario. No entrenar modelo propio. |
+| **App nativa (React Native)** | PWA primero. App nativa solo si PWA no alcanza operacionalmente. |
+| **Twitter/X monitoring** | Fuera del frame OSS/comunidad. Puede venir de otro lado (brigadas ya están en WhatsApp). |
+| **Gamificación (badges, karma)** | Anti-patrón en emergencias serias. Socava credibilidad de verificación. |
+| **ODIN-fire integration** | Stack Rust + bus factor alto. Solo referencia de diseño. |
 
 ---
 
-## Priorización Actual
+## Decisiones pendientes
 
-### Próximas Features (Priorizadas)
+Lista viva. Se resuelven en review semanal.
 
-| Feature | Descripción | Complejidad | Agente |
-|---------|-------------|-------------|--------|
-| **Fly to** | Búsqueda de ubicación con geocoding y autocomplete Mapbox | Baja | Pixel |
-| **Isochrones** | Áreas alcanzables en 5/10/15 min desde recurso seleccionado | Media | Pixel + Kokoro |
-| **Weather overlay** | Capa de viento (flechas), humedad, temperatura | Media | Kokoro + Pixel |
-| **Measure tool** | Medir distancia entre puntos en el mapa | Baja | Pixel |
-
-### Detalle Técnico
-
-#### Fly to (Geocoding)
-```typescript
-// Mapbox Geocoder control
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-
-map.addControl(
-  new MapboxGeocoder({
-    accessToken: MAPBOX_TOKEN,
-    mapboxgl: mapboxgl,
-    placeholder: 'Buscar ubicación...',
-    countries: 'ar', // Solo Argentina
-    bbox: [-73, -55, -53, -21], // Bounds Argentina
-    language: 'es'
-  }),
-  'top-left'
-);
-```
-
-#### Isochrones
-```typescript
-// Mapbox Isochrone API
-const getIsochrone = async (lng: number, lat: number, minutes: number[]) => {
-  const url = `https://api.mapbox.com/isochrone/v1/mapbox/driving/${lng},${lat}?contours_minutes=${minutes.join(',')}&polygons=true&access_token=${MAPBOX_TOKEN}`;
-  const res = await fetch(url);
-  return res.json(); // GeoJSON FeatureCollection
-};
-
-// Colores por tiempo
-const ISOCHRONE_COLORS = {
-  5: '#00ff00',   // Verde - 5 min
-  10: '#ffff00',  // Amarillo - 10 min
-  15: '#ff0000'   // Rojo - 15 min
-};
-```
-
-#### Weather Overlay
-```typescript
-// OpenWeather Tile Layer
-const WEATHER_TILES = {
-  wind: 'https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${OWM_KEY}',
-  temp: 'https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OWM_KEY}',
-  clouds: 'https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${OWM_KEY}'
-};
-
-map.addSource('weather', {
-  type: 'raster',
-  tiles: [WEATHER_TILES.wind],
-  tileSize: 256
-});
-
-map.addLayer({
-  id: 'weather-layer',
-  type: 'raster',
-  source: 'weather',
-  paint: { 'raster-opacity': 0.6 }
-});
-```
-
-#### Measure Tool
-```typescript
-// Turf.js para distancia
-import { distance, lineString } from '@turf/turf';
-
-const measureDistance = (points: [number, number][]) => {
-  if (points.length < 2) return 0;
-  const line = lineString(points);
-  return distance(points[0], points[points.length - 1], { units: 'kilometers' });
-};
-
-// UI: click para agregar puntos, doble-click para terminar
-```
-
-### Backlog (Futuro)
-
-1. Clustering de marcadores
-2. Layer switcher (satélite/topo/dark)
-3. Áreas de influencia para recursos
-4. Ruta recurso → foco
-5. Heatmap histórico
-6. Time slider
-7. Draw tool para zonas
-8. Terrain 3D
+| Decisión | Opciones | Recomendación | Deadline |
+|---|---|---|---|
+| Licencia | MIT / AGPL-3 / dual | AGPL-3 (ver `MARKET_RESEARCH.md` §5) | Antes de Fase 1 cierre |
+| Fiscal host | OSS Collective / Software Freedom Conservancy | OSS Collective para empezar | Fase 1 |
+| Vercel team | Migrar a Skywalking / quedarse en personal | Migrar a Skywalking (alinea con multi-cuenta) | Con rebrand |
+| Supabase project | Rename en dashboard (solo cosmético) | Hacer cuando haya tiempo, no bloquea nada | — |
+| Proveedor SMS | Twilio / MessageBird / local | Twilio por cobertura Argentina | Fase 4 |
+| FireAlert: fork o consume? | Fork AGPL / consume webhook / self-host | Decidir tras verificar licencia real | Fase 4 |
 
 ---
 
-## Notas Técnicas
+## Financiamiento
 
-- **Mapbox GL JS** soporta todo lo listado nativamente
+Proyección realista a 3 años. Detalle en `MARKET_RESEARCH.md` §3A.
+
+| Año | Fuente | Monto estimado | Uso |
+|---|---|---|---|
+| 2026 (resto) | Open Collective + donaciones | ~$500-2000 USD | Infra Supabase/Vercel/Mapbox |
+| 2026 Q4 | NLnet grant application | €15-30K | Infra + CAP integration + outreach |
+| 2027 | Convenio municipio Epuyén/El Bolsón | $500-1000 USD/mes | Infra dedicada regional |
+| 2027 Q2 | Sovereign Tech Fund application | €50K-200K | Mantenimiento + 2º maintainer full-time |
+| 2028 | DPGA recognition + Sloan/MOSS | $50-150K | Expansión a otros países LATAM |
+
+---
+
+## Métricas de éxito (bajo frame OSS)
+
+Lo que importa medir. Lo que **no** importa: MAU, session duration, engagement, ARR.
+
+| Métrica | Target 6m | Target 12m |
+|---|---|---|
+| Brigadas activas usando Igni | 1 | 3-5 |
+| Instancias auto-hospedadas por terceros | 0 | 1 |
+| % focos verificados antes de 1h | baseline | >50% |
+| Contribuidores externos al código | 0 | 3+ |
+| Financiamiento anual (grants + donaciones) | $1K | $20K+ |
+| Menciones en prensa técnica o civic-tech | 0 | 2-3 |
+| Registro en DPGA | No | Sí |
+| Tiempo para reproducir instancia (según DEPLOYMENT.md) | — | <2h |
+
+---
+
+## Notas técnicas (referencia rápida)
+
+- **Mapbox GL JS** soporta todas las capas listadas nativamente
 - **Turf.js** para cálculos geoespaciales client-side
-- **PostGIS** ya habilitado en Supabase para queries espaciales
-- **Mapbox APIs**: Isochrone, Directions, Geocoding (requieren tokens adicionales)
-- **Weather**: OpenWeather, Windy, Tomorrow.io tienen APIs gratis tier
+- **PostGIS** ya habilitado en Supabase
+- **Mapbox APIs** usados: Isochrone, Directions, Geocoding (tokens adicionales)
+- **Weather**: OpenWeather / Windy / Tomorrow.io con free tier
+- **FIRMS API**: gratuita, key requerida en `NASA_FIRMS_KEY`
+- **CAP**: `oasis-open.org/committees/emergency` — spec v1.2
 
 ---
 
-*Última actualización: 2025-01-18*
+## Próxima acción concreta (esta semana)
+
+1. Crear Linear project "Igni" (si no existe) + issues para cada entregable de Fase 1
+2. Escribir `LICENSE` (AGPL-3.0) + commit al repo
+3. Iniciar Open Collective con slug `igni` o `igni-fire`
+4. Redactar primer email de contacto a brigada voluntarios Epuyén
+
+Todo lo demás se deriva de esto.
